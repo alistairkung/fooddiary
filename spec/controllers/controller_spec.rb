@@ -9,11 +9,17 @@ RSpec.describe 'app' do
     App.new
   end
 
-  describe 'GET root' do
+  describe 'POST fetch-meals' do
     it 'returns 200' do
-      get '/'
+      post '/fetch-meals'
 
       expect(last_response.status).to eq(200)
+      expect(last_parsed_response).to eq({
+      "data" => {
+        "meals" => [
+          "wax_gourd_pork_rib_soup-cropped.jpg"
+        ]
+      }})
     end
 
     def last_parsed_response
