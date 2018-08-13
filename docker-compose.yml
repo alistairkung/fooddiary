@@ -4,5 +4,23 @@ services:
     build: .
     ports:
       - "4567:4567"
+    environment:
+      S3_BUCKET: a-bucket
+      S3_REGION: us-east-1
+      S3_ENDPOINT: http://s3:9000
+      S3_ACCESS_KEY: "an_access_key_id"
+      S3_SECRET_KEY: "a_secret_access_key"
+      S3_BUCKET: "development"
     volumes:
       - ".:/opt/app"
+    depends_on:
+      - s3
+
+  s3:
+    image: minio/minio
+    environment:
+      MINIO_ACCESS_KEY: an_access_key_id
+      MINIO_SECRET_KEY: a_secret_access_key
+    ports:
+      - 9000:9000
+    command: server /tmp
