@@ -16,7 +16,7 @@ class App < Sinatra::Base
     content_type :json
     initialize_s3_client
 
-    meals = s3_bucket.objects.map { |o| { o.key => o.presigned_url }}
+    meals = s3_bucket.objects.map { |o| { o.key => o.presigned_url(:get, expires_in: 3600) }}
 
     { data:
       {meals: meals
