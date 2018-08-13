@@ -16,18 +16,19 @@ RSpec.describe 'app' do
         buckets: [{ name: 'mock-bucket' }]
       })
       s3_bucket_mock = s3_mock.bucket('mock-bucket')
-      s3_object = Struct.new(:key, :presigned_url)
 
-      meal = s3_object.new("test.jpg", "url")
+      meal = double(:s3_object, :key => 'test.jpg')
+      an_s3_url = "url"
 
       fake_meal_list = [meal]
 
       expect_any_instance_of(App).to receive(:s3_bucket).and_return(s3_bucket_mock)
+      expect(meal).to receive(:presigned_url).with(any_args).and_return(an_s3_url)
+
       expect(s3_bucket_mock).to receive(:objects).and_return(fake_meal_list)
 
       post '/fetch-meals'
 
-      expect(last_response.status).to eq(200)
       expect(last_parsed_response).to eq({
       "data" => {
         "meals" => [
