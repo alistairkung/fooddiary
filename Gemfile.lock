@@ -639,7 +639,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aws-sdk
+  aws-sdk (~> 3)
   dotenv
   pry
   rack-test (~> 1.1.0)
