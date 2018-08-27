@@ -1,16 +1,16 @@
 module Infrastructure
   class S3
     class << self
+      def client
+        @client ||= instance_client
+      end
+
       def bucket
         s3 = Aws::S3::Resource.new(client: client)
         s3.bucket(ENV['S3_BUCKET'])
       end
 
       private
-
-      def client
-        @client ||= instance_client
-      end
 
       def instance_client
         Aws::S3::Client.new({
