@@ -1,5 +1,11 @@
+require_relative '../config/configurable'
+
 module Infrastructure
   class S3
+    include Configurable
+
+    configure_with :region, :access_key_id, :secret_access_key, :endpoint, :bucket
+
     class << self
       def client
         @client ||= instance_client
@@ -7,17 +13,17 @@ module Infrastructure
 
       def bucket
         s3 = Aws::S3::Resource.new(client: client)
-        s3.bucket(ENV['S3_BUCKET'])
+        s3.bucket(configuration.bucket)
       end
 
       private
 
       def instance_client
         Aws::S3::Client.new({
-          region: ENV['S3_REGION'],
-          access_key_id: ENV['S3_ACCESS_KEY'],
-          secret_access_key: ENV['S3_SECRET_KEY'],
-          endpoint: ENV['S3_ENDPOINT'],
+          region: configuration.region,
+          access_key_id: configuration.access_key_id,
+          secret_access_key: configuration.secret_access_key,
+          endpoint: configuration.endpoint,
           force_path_style: true
         })
       end

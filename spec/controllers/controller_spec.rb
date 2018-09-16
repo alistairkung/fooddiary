@@ -28,8 +28,19 @@ RSpec.describe 'app' do
   end
 
   def setup_s3
+    configure_s3
     create_bucket
     upload_image
+  end
+
+  def configure_s3
+    Infrastructure::S3.configure do |config|
+      config.region = "us-east-1"
+      config.access_key_id = "an_access_key_id"
+      config.secret_access_key = "a_secret_access_key"
+      config.endpoint = "http://s3:9000"
+      config.bucket = "test"
+    end
   end
 
   def create_bucket
@@ -37,16 +48,16 @@ RSpec.describe 'app' do
     s3 = Aws::S3::Resource.new(client: client)
     client.create_bucket({
       acl: "private",
-      bucket: ENV['S3_BUCKET'],
+      bucket: "test",
       create_bucket_configuration: {
-        location_constraint: ENV['S3_REGION']
+        location_constraint: "us-east-1"
       }
-    }) unless s3.bucket(ENV['S3_BUCKET']).exists?
+    }) unless s3.bucket("test").exists?
   end
 
   def upload_image
     s3 = Aws::S3::Resource.new(client: Infrastructure::S3.client)
-    obj = s3.bucket(ENV['S3_BUCKET']).object('soup.jpg')
-    obj.upload_file('spec/fixtures/soup.jpg')
+    obj = s3.bucket("test").object("soup.jpg")
+    obj.upload_file("spec/fixtures/soup.jpg")
   end
 end
